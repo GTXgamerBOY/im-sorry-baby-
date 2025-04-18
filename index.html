@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I'm Sorry, Love</title>
+  <style>
+    /* Universal reset to try and kill anything interfering */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background-color: transparent; /* VERY AGGRESSIVE */
+      background-image: none;
+      border: none;
+      outline: none;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff0f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      flex-direction: column;
+      transition: background 1s ease;
+    }
+
+    body.active-bg {
+      background: linear-gradient(135deg, #ffc1cc, #fff0f5);
+    }
+
+    .heart-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 0;
+    }
+
+    .active-bg .heart-bg {
+      opacity: 0.15;
+    }
+
+    .heart-bg::before, .heart-bg::after {
+      content: '♥';
+      position: absolute;
+      font-size: 70px;
+      color: #f48fb1;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    .heart-bg::before {
+      left: 15%;
+      top: 55%;
+    }
+
+    .heart-bg::after {
+      right: 20%;
+      top: 25%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) scale(1); opacity: 0.5; }
+      50% { transform: translateY(-30px) scale(1.1); opacity: 0.9; }
+      100% { transform: translateY(0) scale(1); opacity: 0.5; }
+    }
+
+    .click-label {
+      margin-bottom: 20px;
+      font-size: 1.1em;
+      color: #e91e63;
+      background: none !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border: 2px solid #e91e63;
+      border-radius: 25px;
+      padding: 12px 25px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      animation: pulse 1.5s infinite;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .click-label:hover {
+      background-color: rgba(233, 30, 99, 0.1) !important;
+      border-color: #d11a5b;
+      color: #d11a5b;
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.03); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .note-wrapper {
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+    }
+
+    .note-container {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      cursor: pointer;
+    }
+
+    .note {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center;
+      transform: translate(-50%, -50%) rotateX(45deg);
+      width: 100%;
+      max-width: 300px; /* Crucial: Limit width */
+      height: auto;
+      background: #fff;
+      border: 1px solid #fcd4e6;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease 0.3s;
+      opacity: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 30px;
+      text-align: left;
+      z-index: 2;
+      white-space: pre-line;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .note-inner {
+      opacity: 0;
+      transition: opacity 0.5s ease 0.8s;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .note.unfolded {
+      transform: translate(-50%, -50%) rotateX(0deg);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      height: auto; /* Allow height to adjust to content */
+      max-height: 80vh; /* Optional: Maximum height to prevent it from taking over the screen */
+      overflow-y: auto; /* Add vertical scroll if it exceeds max-height */
+    }
+
+    .note.unfolded .note-inner {
+      opacity: 1;
+    }
+
+    .note h1 {
+      color: #d11a5b;
+      margin-bottom: 15px;
+      font-size: 1.6em;
+      text-align: center;
+    }
+
+    .note p {
+      font-size: 1em;
+      line-height: 1.6;
+      color: #444;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    .footer {
+      font-size: 0.85em;
+      color: #777;
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="heart-bg"></div>
+
+  <div class="click-label" onclick="unfoldNote()">Click here to open the letter</div>
+
+  <div class="note-wrapper">
+    <div class="note-container" onclick="unfoldNote()">
+      <div class="note" id="note">
+        <div class="note-inner">
+          <h1>I'm Sorry</h1>
+         <p>Bebi, I’ve been thinking a lot about what happened, and I just really want to say how deeply sorry I am sa naging ugali ko kagabi. I know na nasaktan ka sa way na kung pano ako nag chat sayo , and I hate na ako yung reason kung bakit ka nawalan ng gana magkwento. That wasn’t fair to you. And the last thing I ever want is to make you feel na hindi ako interested sa mga bagay na mahalaga sayo.</p>
+         <p>When you told me about your dream na animal shelter, I should’ve paused and really listened. I should’ve been more present, more supportive. Kasi alam ko, hindi lang basta kwento ‘yon para sayo it’s something you’ve been holding onto, something na matagal mo nang gustong i-share. And instead of being the person who uplifts you, I ended up making you feel dismissed. That hurts me more than you know, kasi I never want you to feel na hindi kita pinapansin or na hindi importante yung mga gusto mong sabihin.</p><p>I’m sorry if it felt like I cut you off. I’m sorry if it seemed like I didn’t care. I want you toknowwala akong ibang gustong gawin kundi makinig sayo. And I regret not showing that in that moment. Bebi, you matter to me. Your thoughts matter. Your dreams matter. You deserve someone na fully nakikinig, someone na willing pakinggan kahit anong kwento, kasi yun yung nagpapasaya sayo. And I want to be that person for you.</p><p>You inspire me in so many ways. Your passion, your kindness, the way you talk about your dreams it makes me admire you more each day. Kaya ang sakit na ako pa yung nagparamdam sayo na parang hindi ako interesado. I promise to do better. I promise to be more present, more supportive, and more mindful sa mga words and actions ko. You deserve nothing less.</p>
+         <p>Alam kong words aren’t always enough to fix the hurt I caused, pero gusto kong malaman mo na I’m taking this to heart. I’ve reflected on my actions, and I understand now how important it is to be present especially sa mga moments na gusto mong mag-open up. From now on, I’ll be more intentional. I’ll listen with patience and with the kind of care you deserve. Hindi lang dahil mahal kita, but because I respect you and everything you bring into this relationship. You matter to me more than I sometimes show, and I’m really sorry if I failed to prove that when it mattered most.</p>
+          <div class="footer">From Mako❤️‍🩹</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function unfoldNote() {
+      const note = document.getElementById('note');
+      const body = document.body;
+      const clickLabel = document.querySelector('.click-label');
+
+      note.classList.add('unfolded');
+      body.classList.add('active-bg');
+
+      if (clickLabel) {
+        clickLabel.style.display = 'none';
+      }
+
+      const noteContainer = document.querySelector('.note-container');
+      if (noteContainer) {
+        noteContainer.style.cursor = 'default';
+        noteContainer.onclick = null;
+      }
+    }
+  </script>
+</body>
+</html>
